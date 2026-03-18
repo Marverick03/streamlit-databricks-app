@@ -11,6 +11,24 @@ WAREHOUSE_ID = "afe5734e6076a678"
 # -------------------------------
 # Fetch all cases (Case List Page)
 # -------------------------------
+# def get_all_cases():
+#     query = """
+#     SELECT case_id,
+#            title,
+#            status,
+#            created_date
+#     FROM msci.ticket_management_system.support_cases
+#     ORDER BY created_date DESC
+#     """
+
+#     response = w.statement_execution.execute_statement(
+#         statement=query,
+#         warehouse_id=WAREHOUSE_ID
+#     )
+
+#     return response.result.data_array
+
+
 def get_all_cases():
     query = """
     SELECT case_id,
@@ -26,7 +44,10 @@ def get_all_cases():
         warehouse_id=WAREHOUSE_ID
     )
 
-    return response.result.data_array
+    if response and response.result and response.result.data_array:
+        return response.result.data_array
+    else:
+        return []
 
 
 # -------------------------------
