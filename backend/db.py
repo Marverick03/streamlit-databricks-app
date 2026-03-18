@@ -11,6 +11,24 @@ WAREHOUSE_ID = "afe5734e6076a678"
 # -------------------------------
 # Fetch all cases (Case List Page)
 # -------------------------------
+# def get_all_cases():
+#     query = """
+#     SELECT case_id,
+#            title,
+#            status,
+#            created_date
+#     FROM msci.ticket_management_system.support_cases
+#     ORDER BY created_date DESC
+#     """
+
+#     response = w.statement_execution.execute_statement(
+#         statement=query,
+#         warehouse_id=WAREHOUSE_ID
+#     )
+
+#     return response.result.data_array
+
+
 def get_all_cases():
     query = """
     SELECT case_id,
@@ -21,12 +39,29 @@ def get_all_cases():
     ORDER BY created_date DESC
     """
 
-    response = w.statement_execution.execute_statement(
-        statement=query,
-        warehouse_id=WAREHOUSE_ID
-    )
+    try:
+        response = w.statement_execution.execute_statement(
+            statement=query,
+            warehouse_id=WAREHOUSE_ID
+        )
 
-    return response.result.data_array
+        # If response or result is missing, return empty list
+        if not response:
+            return []
+
+        result = getattr(response, "result", None)
+        if not result:
+            return []
+
+        data = getattr(result, "data_array", None)
+        if not data:
+            return []
+
+        return data
+
+    except Exception as e:
+        print("Database Error:", e)
+        return []
 
 
 # -------------------------------
