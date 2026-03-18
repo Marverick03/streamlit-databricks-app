@@ -39,14 +39,28 @@ def get_all_cases():
     ORDER BY created_date DESC
     """
 
-    response = w.statement_execution.execute_statement(
-        statement=query,
-        warehouse_id=WAREHOUSE_ID
-    )
+    try:
+        response = w.statement_execution.execute_statement(
+            statement=query,
+            warehouse_id=WAREHOUSE_ID
+        )
 
-    if response and response.result and response.result.data_array:
-        return response.result.data_array
-    else:
+        # If response or result is missing, return empty list
+        if not response:
+            return []
+
+        result = getattr(response, "result", None)
+        if not result:
+            return []
+
+        data = getattr(result, "data_array", None)
+        if not data:
+            return []
+
+        return data
+
+    except Exception as e:
+        print("Database Error:", e)
         return []
 
 
