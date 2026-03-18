@@ -1,6 +1,6 @@
 import streamlit as st
 import pandas as pd
-from backend.db import get_all_cases
+from db.py import get_all_cases
 
 st.set_page_config(page_title="Case Management System", layout="wide")
 
