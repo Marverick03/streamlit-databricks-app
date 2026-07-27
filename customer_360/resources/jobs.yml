@@ -1,0 +1,114 @@
+# resources:
+#   jobs:
+#     customer360_job:
+
+#       name: customer360_job
+
+#       tasks:
+
+#         - task_key: task1
+#           notebook_task:
+#             notebook_path: ../src/bronze_layer.py
+#           environment_key: serverless
+
+#         - task_key: task2
+#           depends_on:
+#             - task_key: task1
+#           notebook_task:
+#             notebook_path: ../src/dim_account_silver_layer.py
+#           environment_key: serverless
+
+#         - task_key: task3
+#           depends_on:
+#             - task_key: task2
+#           notebook_task:
+#             notebook_path: ../src/dim_customer_silver_layer.py
+#           environment_key: serverless
+
+#         - task_key: task4
+#           depends_on:
+#             - task_key: task3
+#           notebook_task:
+#             notebook_path: ../src/fact_transactions_silver_layer.py
+#           environment_key: serverless
+
+#         - task_key: task5
+#           depends_on:
+#             - task_key: task4
+#           notebook_task:
+#             notebook_path: ../src/fact_transactions_silver_layer.py
+#           environment_key: serverless
+
+#         - task_key: task6
+#           depends_on:
+#             - task_key: task5
+#           notebook_task:
+#             notebook_path: ../src/ridge_customer_account_silver_layer.py
+#           environment_key: serverless
+
+#       environments:
+#         - environment_key: serverless
+#           spec:
+#             client: "1"
+
+resources:
+  jobs:
+
+    customer360_job:
+
+      name: customer360_job
+
+      tasks:
+
+        - task_key: bronze_layer
+
+          notebook_task:
+            notebook_path: ../src/bronze_layer.py
+
+          environment_key: serverless
+
+        - task_key: dim_account
+
+          depends_on:
+            - task_key: bronze_layer
+
+          notebook_task:
+            notebook_path: ../src/dim_account_silver_layer.py
+
+          environment_key: serverless
+
+        - task_key: dim_customer
+
+          depends_on:
+            - task_key: dim_account
+
+          notebook_task:
+            notebook_path: ../src/dim_customer_silver_layer.py
+
+          environment_key: serverless
+
+        - task_key: fact_transactions
+
+          depends_on:
+            - task_key: dim_customer
+
+          notebook_task:
+            notebook_path: ../src/fact_transactions_silver_layer.py
+
+          environment_key: serverless
+
+        - task_key: bridge_customer_account
+
+          depends_on:
+            - task_key: fact_transactions
+
+          notebook_task:
+            notebook_path: ../src/bridge_customer_account_silver_layer.py
+
+          environment_key: serverless
+
+      environments:
+
+        - environment_key: serverless
+          spec:
+            client: "1"

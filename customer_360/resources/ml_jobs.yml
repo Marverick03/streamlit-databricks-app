@@ -1,0 +1,98 @@
+# ML Training Pipeline Job Definitions
+# This file defines the MLOps training pipeline with parallel model training
+
+resources:
+  jobs:
+
+    # ==================================================================
+    # ML Model Training Pipeline
+    # Trains all 4 propensity models in parallel
+    # ==================================================================
+    ml_training_pipeline:
+      name: "[${var.env}] ML Training Pipeline"
+      
+      max_concurrent_runs: 1
+      
+      tasks:
+        
+        # ============================================================
+        # PARALLEL MODEL TRAINING
+        # All 4 models train in parallel
+        # ============================================================
+        
+        - task_key: train_insurance_model
+          notebook_task:
+            notebook_path: ../src/ml_models/insurance_propensity_model.py
+            base_parameters:
+              catalog: ${var.catalog}
+              schema: ${var.schema}
+              model_catalog: ${var.model_catalog}
+              model_schema: ${var.model_schema}
+              model_name: insurance_propensity_model
+              experiment_path: /Shared/mlops/${var.env}/insurance_propensity
+              env: ${var.env}
+          environment_key: serverless
+        
+        - task_key: train_loan_model
+          notebook_task:
+            notebook_path: ../src/ml_models/personal_loan_propensity_model.py
+            base_parameters:
+              catalog: ${var.catalog}
+              schema: ${var.schema}
+              model_catalog: ${var.model_catalog}
+              model_schema: ${var.model_schema}
+              model_name: personal_loan_propensity_model
+              experiment_path: /Shared/mlops/${var.env}/personal_loan_propensity
+              env: ${var.env}
+          environment_key: serverless
+        
+        - task_key: train_premium_card_model
+          notebook_task:
+            notebook_path: ../src/ml_models/premium_card_propensity_model.py
+            base_parameters:
+              catalog: ${var.catalog}
+              schema: ${var.schema}
+              model_catalog: ${var.model_catalog}
+              model_schema: ${var.model_schema}
+              model_name: premium_card_propensity_model
+              experiment_path: /Shared/mlops/${var.env}/premium_card_propensity
+              env: ${var.env}
+          environment_key: serverless
+        
+        - task_key: train_wealth_model
+          notebook_task:
+            notebook_path: ../src/ml_models/wealth_management_propensity_model.py
+            base_parameters:
+              catalog: ${var.catalog}
+              schema: ${var.schema}
+              model_catalog: ${var.model_catalog}
+              model_schema: ${var.model_schema}
+              model_name: wealth_management_propensity_model
+              experiment_path: /Shared/mlops/${var.env}/wealth_management_propensity
+              env: ${var.env}
+          environment_key: serverless
+      
+      # Serverless compute environment
+      environments:
+        - environment_key: serverless
+          spec:
+            client: "1"
+      
+      # Optional: Schedule to run daily at 2 AM
+      schedule:
+        quartz_cron_expression: "0 0 2 * * ?"
+        timezone_id: "UTC"
+        pause_status: PAUSED
+      
+      # Email notifications
+      email_notifications:
+        on_success:
+          - ${var.notification_email}
+        on_failure:
+          - ${var.notification_email}
+      
+      # Tags for organization
+      tags:
+        environment: ${var.env}
+        pipeline: mlops
+        team: data-science

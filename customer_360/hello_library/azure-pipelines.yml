@@ -1,0 +1,37 @@
+trigger:
+  branches:
+    include:
+      - main
+
+pool:
+  vmImage: ubuntu-latest
+
+steps:
+
+# Use Python
+- task: UsePythonVersion@0
+  displayName: "Use Python 3.11"
+  inputs:
+    versionSpec: "3.11"
+
+# Install required tools
+- script: |
+    python -m pip install --upgrade pip
+    pip install build twine keyring artifacts-keyring
+  displayName: "Install Dependencies"
+
+# Build the package
+- script: |
+    python -m build
+  displayName: "Build Python Package"
+
+# Authenticate with Azure Artifacts Feed
+- task: TwineAuthenticate@1
+  displayName: "Authenticate with Azure Artifacts"
+  inputs:
+    artifactFeed: "hello-library-feed"
+
+# Publish package
+- script: |
+    python -m twine upload -r hello-library-feed dist/*
+  displayName: "Publish Package"

@@ -1,0 +1,5 @@
+pyproject.toml
+hello_library.egg-info/PKG-INFO
+hello_library.egg-info/SOURCES.txt
+hello_library.egg-info/dependency_links.txt
+hello_library.egg-info/top_level.txt

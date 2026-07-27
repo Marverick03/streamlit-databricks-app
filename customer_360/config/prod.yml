@@ -1,0 +1,25 @@
+# Production Environment Configuration
+# These variables are used in databricks.yml for the prod target
+
+env: prod
+
+# Data sources
+catalog: customer360
+schema: gold
+
+# Model registry
+model_catalog: customer360
+model_schema: ml_models
+
+# MLflow experiments
+experiment_base_path: /Shared/mlops/prod
+
+# Notifications
+notification_email: rushikesh.kumavat@hoonartek.com
+
+# Compute
+compute_type: serverless
+
+# Model deployment settings
+model_serving_workload_size: Medium
+model_serving_scale_to_zero: false

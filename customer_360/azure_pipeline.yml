@@ -1,0 +1,75 @@
+trigger:
+  branches:
+    include:
+      - master_prd
+
+pr: none
+
+pool:
+  vmImage: ubuntu-latest
+
+variables:
+  pythonVersion: '3.11'
+
+steps:
+
+# Install Python
+- task: UsePythonVersion@0
+  inputs:
+    versionSpec: '$(pythonVersion)'
+
+# Install Databricks CLI
+- script: |
+    python -m pip install --upgrade pip
+    curl -fsSL https://raw.githubusercontent.com/databricks/setup-cli/main/install.sh | sh
+    echo "Databricks CLI Version:"
+    databricks version
+  displayName: Install Databricks CLI
+
+# Verify Authentication
+- script: |
+    echo "Verifying Databricks connection..."
+    databricks current-user me -t prod
+  displayName: Verify Databricks Connection
+  env:
+    DATABRICKS_HOST: "enter dbx host"
+    DATABRICKS_TOKEN: "enter dbx token"
+
+# Validate Bundle
+- script: |
+    echo "Validating bundle..."
+    databricks bundle validate -t prod
+  displayName: Validate Bundle
+  env:
+    DATABRICKS_HOST: "enter dbx host"
+    DATABRICKS_TOKEN: "enter dbx token"
+
+# Deploy Bundle
+- script: |
+    echo "Deploying bundle..."
+    databricks bundle deploy -t prod
+  displayName: Deploy Bundle
+  env:
+    DATABRICKS_HOST: "enter dbx host"
+    DATABRICKS_TOKEN: "enter dbx token"
+
+# Run Customer360 Job
+- script: |
+    echo "Running customer360_job......"
+    databricks bundle run customer360_job -t prod
+  displayName: Run Customer360 Job
+  condition: succeeded()
+  env:
+    DATABRICKS_HOST: "enter dbx host"
+    DATABRICKS_TOKEN: "enter dbx token"
+
+# Run ML Training Pipeline
+- script: |
+    echo "Running ml_training_pipeline......"
+    databricks bundle run ml_training_pipeline -t prod
+  displayName: Run ML Training Pipeline
+  condition: succeeded()
+  env:
+    DATABRICKS_HOST: "enter dbx host"
+    DATABRICKS_TOKEN: "enter dbx token"
+

@@ -1,0 +1,110 @@
+# bundle:
+#   name: adb-azuredatabricks
+
+# include:
+#   - resources/*.yml
+
+# targets:
+#   dev:
+#     mode: development
+
+#     workspace: 
+#       host: https://dbc-16db0a3f-310c.cloud.databricks.com/
+#       root_path: /Workspace/Users/${workspace.current_user..userName}/.bundle/${bundle.name}/${bundle.target}
+
+# #   prod:
+# #     mode: production
+
+# #     workspace:
+# #       host: https://adb-xxxxxxxxxxxxxxxx.xx.azuredatabricks.net
+# #       root_path: /Shared/.bundle/${bundle.name}/${bundle.target}
+#running code 
+# bundle:
+#   name: adb-azuredatabricks
+
+# include:
+#   - resources/*.yml
+
+# targets:
+#   dev:
+#     mode: development
+
+#     workspace:
+#       host: https://dbc-16db0a3f-310c.cloud.databricks.com/
+#         #$(DATABRICKS_HOST)
+
+#       # root_path: ~/.bundle/${bundle.name}/${bundle.target}
+
+#       # artifact_path: ~/.bundle/${bundle.name}/${bundle.target}/artifacts
+
+#       # file_path: ~/.bundle/${bundle.name}/${bundle.target}/files
+
+#       root_path: /Workspace/Users/${workspace.current_user.userName}/.bundle/${bundle.name}/${bundle.target}
+
+#       artifact_path: /Workspace/Users/${workspace.current_user.userName}/.bundle/${bundle.name}/${bundle.target}/artifacts
+
+#       file_path: /Workspace/Users/${workspace.current_user.userName}/.bundle/${bundle.name}/${bundle.target}/files
+
+bundle:
+  name: adb-azuredatabricks
+
+# Include all resource definitions (data pipelines + ML jobs)
+include:
+  - resources/*.yml
+
+# Variables loaded from config files
+variables:
+  env:
+    description: "Environment (dev/prod)"
+    default: dev
+  catalog:
+    description: "UC Catalog for data"
+    default: customer360
+  schema:
+    description: "UC Schema for data"
+    default: gold
+  model_catalog:
+    description: "UC Catalog for models"
+    default: customer360
+  model_schema:
+    description: "UC Schema for models"
+    default: ml_models
+  notification_email:
+    description: "Email for job notifications"
+    default: rushikesh.kumavat@hoonartek.com
+
+targets:
+
+  dev:
+    mode: development
+    
+    # Dev-specific variable overrides
+    variables:
+      env: dev
+      catalog: customer360
+      schema: gold
+      model_catalog: customer360
+      model_schema: ml_models
+      notification_email: rushikesh.kumavat@hoonartek.com
+
+    workspace:
+      host: https://dbc-16db0a3f-310c.cloud.databricks.com/
+      root_path: /Workspace/Users/${workspace.current_user.userName}/.bundle/${bundle.name}/${bundle.target}
+      artifact_path: /Workspace/Users/${workspace.current_user.userName}/.bundle/${bundle.name}/${bundle.target}/artifacts
+      file_path: /Workspace/Users/${workspace.current_user.userName}/.bundle/${bundle.name}/${bundle.target}/files
+
+  prod:
+    mode: production
+    
+    # Prod-specific variable overrides
+    variables:
+      env: prod
+      catalog: customer360
+      schema: gold
+      model_catalog: customer360
+      model_schema: ml_models
+      notification_email: rushikesh.kumavat@hoonartek.com
+
+    workspace:
+      host: https://dbc-28e8237d-8c08.cloud.databricks.com
+      root_path: /Workspace/Shared/.bundle/${bundle.name}/${bundle.target}

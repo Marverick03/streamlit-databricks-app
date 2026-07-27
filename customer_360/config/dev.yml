@@ -1,0 +1,25 @@
+# Development Environment Configuration
+# These variables are used in databricks.yml for the dev target
+
+env: dev
+
+# Data sources
+catalog: customer360
+schema: gold
+
+# Model registry
+model_catalog: customer360
+model_schema: ml_models
+
+# MLflow experiments
+experiment_base_path: /Shared/mlops/dev
+
+# Notifications
+notification_email: rushikesh.kumavat@hoonartek.com
+
+# Compute
+compute_type: serverless
+
+# Model deployment settings
+model_serving_workload_size: Small
+model_serving_scale_to_zero: true
